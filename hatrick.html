@@ -1,0 +1,296 @@
+<!doctype html>
+<html lang="en">
+<head>
+<meta charset="utf-8">
+<meta name="viewport" content="width=device-width, initial-scale=1">
+<title>Hatrick — Feature Walkthrough</title>
+<style>
+  :root{
+    --bg:#0b0d12; --panel:#12151d; --panel2:#171b25; --line:#232838;
+    --ink:#e7eaf0; --muted:#9aa3b5; --brand:#6c8cff; --green:#34d399; --amber:#fbbf24;
+    --radius:14px; --max:1080px;
+  }
+  *{box-sizing:border-box}
+  html{scroll-behavior:smooth}
+  body{margin:0;background:var(--bg);color:var(--ink);
+    font:16px/1.6 -apple-system,BlinkMacSystemFont,"Segoe UI",Roboto,Helvetica,Arial,sans-serif;}
+  a{color:var(--brand);text-decoration:none}
+  header.hero{padding:64px 24px 40px;max-width:var(--max);margin:0 auto}
+  .badge{display:inline-block;font-size:12px;letter-spacing:.14em;text-transform:uppercase;
+    color:var(--brand);border:1px solid var(--line);padding:4px 10px;border-radius:999px;margin-bottom:18px}
+  h1{font-size:40px;line-height:1.1;margin:0 0 12px}
+  h1 .sub{color:var(--muted);font-weight:400}
+  .lede{color:var(--muted);font-size:18px;max-width:70ch}
+  main{max-width:var(--max);margin:0 auto;padding:0 24px 96px}
+  section{padding-top:56px;scroll-margin-top:24px}
+  h2{font-size:26px;margin:0 0 6px;padding-bottom:10px;border-bottom:1px solid var(--line)}
+  h2 .k{color:var(--muted);font-weight:400;font-size:16px}
+  h3{font-size:18px;margin:28px 0 4px}
+  .cap{color:var(--muted);font-size:14.5px;margin:2px 0 14px}
+  figure{margin:0 0 12px}
+  figure img{width:100%;height:auto;display:block;border:1px solid var(--line);
+    border-radius:var(--radius);background:var(--panel)}
+  figure figcaption{color:var(--muted);font-size:13.5px;margin-top:8px;text-align:center}
+  .grid{display:grid;grid-template-columns:1fr 1fr;gap:22px}
+  @media(max-width:760px){.grid{grid-template-columns:1fr}}
+  .card{background:var(--panel);border:1px solid var(--line);border-radius:var(--radius);padding:18px 20px}
+  .cred{display:grid;grid-template-columns:1fr 1fr;gap:16px;margin-top:16px}
+  @media(max-width:760px){.cred{grid-template-columns:1fr}}
+  code,kbd{background:var(--panel2);border:1px solid var(--line);border-radius:6px;
+    padding:1.5px 6px;font:13px/1.4 ui-monospace,SFMono-Regular,Menlo,monospace;color:#cfe0ff}
+  .pill{display:inline-block;font-size:12px;padding:2px 9px;border-radius:999px;border:1px solid var(--line);color:var(--muted)}
+  .pill.g{color:var(--green);border-color:#1f4a3a}
+  .pill.a{color:var(--amber);border-color:#4a3d1f}
+  table{width:100%;border-collapse:collapse;margin-top:10px;font-size:14.5px}
+  th,td{text-align:left;padding:9px 10px;border-bottom:1px solid var(--line)}
+  th{color:var(--muted);font-weight:600}
+  nav.toc{position:sticky;top:0;background:rgba(11,13,18,.85);backdrop-filter:blur(8px);
+    border-bottom:1px solid var(--line);z-index:5}
+  nav.toc .inner{max-width:var(--max);margin:0 auto;padding:12px 24px;display:flex;gap:18px;flex-wrap:wrap;font-size:14px}
+  nav.toc a{color:var(--muted)} nav.toc a:hover{color:var(--ink)}
+  .note{background:var(--panel2);border-left:3px solid var(--brand);border-radius:8px;padding:12px 16px;color:var(--muted);font-size:14.5px;margin:16px 0}
+  .phones{display:grid;grid-template-columns:repeat(auto-fit,minmax(190px,1fr));gap:20px;margin:10px 0 6px}
+  .phone img{width:100%;max-width:270px;height:auto;display:block;margin:0 auto;border:1px solid var(--line);border-radius:22px;background:var(--panel)}
+  .phone figcaption{text-align:center;color:var(--muted);font-size:12.5px;margin-top:8px}
+  .foot{color:var(--muted);font-size:13px;text-align:center;padding:40px 0 0;border-top:1px solid var(--line);margin-top:64px}
+  @media print{
+    html,body{background:#0b0d12 !important;-webkit-print-color-adjust:exact;print-color-adjust:exact}
+    nav.toc{display:none !important}
+    header.hero{padding-top:24px}
+    main{padding-bottom:24px}
+    section{page-break-before:auto;padding-top:34px}
+    h2{page-break-after:avoid}
+    h3{page-break-after:avoid}
+    figure,.card,.phone{page-break-inside:avoid;break-inside:avoid}
+    .phones{grid-template-columns:repeat(3,1fr)}
+    a{color:var(--ink) !important;text-decoration:none}
+  }
+</style>
+</head>
+<body>
+<nav class="toc"><div class="inner">
+  <a href="#overview">Overview</a>
+  <a href="#access">Demo access</a>
+  <a href="#consumer">Customer app</a>
+  <a href="#professional">Professional app</a>
+  <a href="#admin">Admin console</a>
+  <a href="#data">Seeded data</a>
+</div></nav>
+
+<header class="hero">
+  <span class="badge">Demo Walkthrough</span>
+  <h1>Hatrick <span class="sub">— feature walkthrough</span></h1>
+  <p class="lede">A two-sided creative-services marketplace: customers discover and book professionals,
+  chat, pay into escrow, receive deliverables and leave reviews — with a full ops/admin console behind it.
+  This walkthrough tours the product using a live, seeded demo dataset centred on photographer
+  <strong>Lola Okeke Studios</strong> and customer <strong>Chidi O</strong>.</p>
+</header>
+
+<main>
+
+<section id="overview">
+  <h2>Overview</h2>
+  <p>Two apps make up the product:</p>
+  <div class="grid">
+    <div class="card"><h3 style="margin-top:0">📱 Mobile app <span class="pill">Flutter · iOS/Android</span></h3>
+      <p class="cap" style="margin-bottom:0">One app, two sides. <strong>Customers</strong> discover, book, pay via escrow, chat and review;
+      <strong>professionals</strong> get a dashboard, quote requests, package management and insights. This is where the rich media lives.</p></div>
+    <div class="card"><h3 style="margin-top:0">🛠️ Admin console <span class="pill">Next.js · Web</span></h3>
+      <p class="cap" style="margin-bottom:0">Operations back-office: users, bookings, feed moderation, reviews,
+      payments, payouts, disputes, ledger, FX, subscriptions and concierge.</p></div>
+  </div>
+</section>
+
+<section id="access">
+  <h2>Demo access <span class="k">— how to sign in</span></h2>
+  <div class="cred">
+    <div class="card">
+      <h3 style="margin-top:0">Customer app &amp; profiles</h3>
+      <table>
+        <tr><th>Role</th><th>Email</th><th>Password</th></tr>
+        <tr><td>Customer — Chidi O</td><td><code>demo.customer@hatrick.test</code></td><td><code>DemoPass123!</code></td></tr>
+        <tr><td>Professional — Lola Okeke</td><td><code>demo.creator.seed@yopmail.com</code></td><td><code>DemoPass123!</code></td></tr>
+      </table>
+    </div>
+    <div class="card">
+      <h3 style="margin-top:0">Admin console</h3>
+      <table>
+        <tr><th>Role</th><th>Email</th><th>Password</th></tr>
+        <tr><td>Super admin</td><td><code>hatrick@yopmail.com</code></td><td><code>Pa$$word1</code></td></tr>
+      </table>
+      <p class="cap" style="margin:12px 0 0">API runs on <code>localhost:54080</code>, Postgres on <code>54320</code>,
+      Centrifugo on <code>54000</code> (ports remapped to avoid conflicts).</p>
+    </div>
+  </div>
+</section>
+
+<!-- ============================ CONSUMER (FLUTTER) ============================ -->
+<section id="consumer">
+  <h2>Customer app <span class="k">— Flutter (iOS)</span></h2>
+  <p class="cap">The consumer experience where customers discover professionals, book, chat, pay and review.
+  Real photos and video render in the discovery feed and portfolios.</p>
+  <p class="cap">All screens below are live captures from the app running on Android against the seeded backend, shown in both light and dark themes.</p>
+
+  <h3>Sign-in</h3>
+  <p class="cap">Email/password with Google &amp; Apple sign-in.</p>
+  <div class="phones">
+    <figure class="phone"><img src="screenshots/customer-01-login.png" alt="Login"><figcaption>Welcome back</figcaption></figure>
+  </div>
+
+  <h3>Discovery feed</h3>
+  <p class="cap">Customers browse showcase posts — real photos &amp; video — filterable by category (Photography, Video, DJs, Design).</p>
+  <div class="phones">
+    <figure class="phone"><img src="screenshots/customer-02-feed.png" alt="Feed light"><figcaption>Discover · light</figcaption></figure>
+    <figure class="phone"><img src="screenshots/customer-dark-feed.png" alt="Feed dark"><figcaption>Discover · dark</figcaption></figure>
+  </div>
+
+  <h3>Post detail &amp; professional profile</h3>
+  <p class="cap">Tapping a post opens the work with escrow-safe "Request a quote"; the profile shows ratings, followers, reply time, rebook rate and a Work / Packages / Reviews / About portfolio.</p>
+  <div class="phones">
+    <figure class="phone"><img src="screenshots/customer-03-post.png" alt="Post light"><figcaption>Post detail · light</figcaption></figure>
+    <figure class="phone"><img src="screenshots/customer-dark-post.png" alt="Post dark"><figcaption>Post detail · dark</figcaption></figure>
+    <figure class="phone"><img src="screenshots/customer-04-profile.png" alt="Profile light"><figcaption>Profile · light</figcaption></figure>
+    <figure class="phone"><img src="screenshots/customer-dark-profile.png" alt="Profile dark"><figcaption>Profile · dark</figcaption></figure>
+  </div>
+
+  <h3>Bookings &amp; escrow</h3>
+  <p class="cap">Active vs. completed bookings with lifecycle states — "Funds secured" (in escrow) and "Awaiting payment" — and a booking detail explaining that funds release only on approval.</p>
+  <div class="phones">
+    <figure class="phone"><img src="screenshots/customer-05-bookings.png" alt="Bookings light"><figcaption>Bookings · light</figcaption></figure>
+    <figure class="phone"><img src="screenshots/customer-dark-bookings.png" alt="Bookings dark"><figcaption>Bookings · dark</figcaption></figure>
+    <figure class="phone"><img src="screenshots/customer-06-escrow.png" alt="Escrow light"><figcaption>Escrow detail · light</figcaption></figure>
+    <figure class="phone"><img src="screenshots/customer-dark-escrow.png" alt="Escrow dark"><figcaption>Escrow detail · dark</figcaption></figure>
+  </div>
+
+  <h3>In-app chat</h3>
+  <p class="cap">Per-booking messaging (with call &amp; video) and an escrow-protection reminder to keep chat &amp; payments on-platform.</p>
+  <div class="phones">
+    <figure class="phone"><img src="screenshots/customer-07-chat.png" alt="Chat light"><figcaption>Chat · light</figcaption></figure>
+    <figure class="phone"><img src="screenshots/customer-dark-chat.png" alt="Chat dark"><figcaption>Chat · dark</figcaption></figure>
+  </div>
+</section>
+
+<!-- ============================ PROFESSIONAL (FLUTTER) ============================ -->
+<section id="professional">
+  <h2>Professional app <span class="k">— the creator side</span></h2>
+  <p class="cap">The same app, signed in as a professional (Lola Okeke Studios), surfaces a creator dashboard: earnings &amp; escrow, incoming quote requests, package management, and performance insights. Live Android captures in light and dark.</p>
+
+  <h3>Onboarding &amp; welcome</h3>
+  <p class="cap">First-run category tour and a welcome screen leading to sign-in or sign-up.</p>
+  <div class="phones">
+    <figure class="phone"><img src="screenshots/onboarding.png" alt="Onboarding"><figcaption>Category onboarding</figcaption></figure>
+    <figure class="phone"><img src="screenshots/welcome.png" alt="Welcome"><figcaption>Welcome / get started</figcaption></figure>
+  </div>
+
+  <h3>Creator dashboard</h3>
+  <p class="cap">Available balance with a Withdraw action, funds held in escrow "releasing soon", KPI tiles (new requests, active jobs, rating) and a "Next up" action list (respond to requests, deliver files).</p>
+  <div class="phones">
+    <figure class="phone"><img src="screenshots/pro-01-home.png" alt="Pro home light"><figcaption>Dashboard · light</figcaption></figure>
+    <figure class="phone"><img src="screenshots/pro-dark-home.png" alt="Pro home dark"><figcaption>Dashboard · dark</figcaption></figure>
+  </div>
+
+  <h3>Jobs — quotes &amp; active work</h3>
+  <p class="cap">Incoming quote requests to respond to, plus active jobs with escrow / review / dispute states.</p>
+  <div class="phones">
+    <figure class="phone"><img src="screenshots/pro-02-jobs.png" alt="Jobs light"><figcaption>Jobs · light</figcaption></figure>
+    <figure class="phone"><img src="screenshots/pro-dark-jobs.png" alt="Jobs dark"><figcaption>Jobs · dark</figcaption></figure>
+  </div>
+
+  <h3>Manage packages</h3>
+  <p class="cap">The creator's services with pricing and completion modes — fixed packages and custom-quote — editable inline.</p>
+  <div class="phones">
+    <figure class="phone"><img src="screenshots/pro-03-packages.png" alt="Packages"><figcaption>Packages / services</figcaption></figure>
+  </div>
+
+  <h3>Insights</h3>
+  <p class="cap">Profile views, quote requests, request→booking conversion, top-performing work and per-package performance.</p>
+  <div class="phones">
+    <figure class="phone"><img src="screenshots/pro-04-insights.png" alt="Insights light"><figcaption>Insights · light</figcaption></figure>
+    <figure class="phone"><img src="screenshots/pro-dark-insights.png" alt="Insights dark"><figcaption>Insights · dark</figcaption></figure>
+  </div>
+
+  <h3>Account</h3>
+  <p class="cap">Go Premium, switch modes, edit profile, quote requests, packages, bookings, payouts and settings.</p>
+  <div class="phones">
+    <figure class="phone"><img src="screenshots/pro-05-profile.png" alt="Pro account"><figcaption>Professional account</figcaption></figure>
+  </div>
+</section>
+
+<!-- ============================ ADMIN CONSOLE ============================ -->
+<section id="admin">
+  <h2>Admin / Ops console <span class="k">— Next.js web</span></h2>
+  <p class="cap">The operational back-office. Every figure below is a live screenshot rendering the seeded dataset.</p>
+
+  <h3>Sign-in &amp; overview</h3>
+  <p class="cap">Password login with WebAuthn / passkey support; a KPI overview lands you in the console.</p>
+  <div class="grid">
+    <figure><img src="screenshots/admin-00-login.png" alt="Admin login"><figcaption>Admin sign-in — password + passkey</figcaption></figure>
+    <figure><img src="screenshots/admin-01-dashboard.png" alt="Admin dashboard"><figcaption>Operations overview dashboard</figcaption></figure>
+  </div>
+
+  <h3>People &amp; commerce</h3>
+  <p class="cap">Manage users and follow every booking through its lifecycle (quote → escrow → delivery → completed).</p>
+  <div class="grid">
+    <figure><img src="screenshots/admin-02-users.png" alt="Users"><figcaption>Users — roles, status, verification</figcaption></figure>
+    <figure><img src="screenshots/admin-03-bookings.png" alt="Bookings"><figcaption>Bookings across lifecycle states</figcaption></figure>
+  </div>
+
+  <h3>Content moderation</h3>
+  <p class="cap">Approve or reject showcase posts for the discovery feed; moderate ratings and written reviews.</p>
+  <div class="grid">
+    <figure><img src="screenshots/admin-04-feed.png" alt="Feed moderation"><figcaption>Feed moderation — Lola's showcase posts, sponsored flags</figcaption></figure>
+    <figure><img src="screenshots/admin-05-reviews.png" alt="Reviews"><figcaption>Reviews — 4.83★ avg, rating distribution, Chidi→Lola reviews</figcaption></figure>
+  </div>
+
+  <h3>Money movement</h3>
+  <p class="cap">Escrow payments, professional payouts, and a double-entry ledger with multi-currency FX.</p>
+  <div class="grid">
+    <figure><img src="screenshots/admin-06-payments.png" alt="Payments"><figcaption>Payments — captured escrow charges</figcaption></figure>
+    <figure><img src="screenshots/admin-07-payouts.png" alt="Payouts"><figcaption>Payouts to professionals</figcaption></figure>
+    <figure><img src="screenshots/admin-09-ledger.png" alt="Ledger"><figcaption>Double-entry ledger</figcaption></figure>
+    <figure><img src="screenshots/admin-10-fx.png" alt="FX rates"><figcaption>FX rates &amp; conversion settings</figcaption></figure>
+  </div>
+
+  <h3>Trust, safety &amp; growth</h3>
+  <p class="cap">Dispute resolution queue, subscription plans, and concierge requests.</p>
+  <div class="grid">
+    <figure><img src="screenshots/admin-08-disputes.png" alt="Disputes"><figcaption>Disputes queue</figcaption></figure>
+    <figure><img src="screenshots/admin-11-subscriptions.png" alt="Subscriptions"><figcaption>Subscription plans</figcaption></figure>
+    <figure><img src="screenshots/admin-12-concierge.png" alt="Concierge"><figcaption>Concierge requests</figcaption></figure>
+  </div>
+</section>
+
+<!-- ============================ DATA ============================ -->
+<section id="data">
+  <h2>Seeded demo data</h2>
+  <p class="cap">The demo centres on a matched professional + customer pair, wired together so bookings,
+  chat and reviews are between the same two people — plus social-proof reviews from four other customers.</p>
+  <div class="grid">
+    <div class="card">
+      <h3 style="margin-top:0">Lola Okeke Studios <span class="pill g">professional</span></h3>
+      <table>
+        <tr><td>Services</td><td>6 (wedding, brand, engagement, event film, product…)</td></tr>
+        <tr><td>Showcase posts</td><td>4 published — real photos + video</td></tr>
+        <tr><td>Bookings</td><td>9</td></tr>
+        <tr><td>Reviews</td><td>6 · <strong>4.83★</strong> avg</td></tr>
+        <tr><td>Deliverables</td><td>4</td></tr>
+      </table>
+    </div>
+    <div class="card">
+      <h3 style="margin-top:0">Chidi O <span class="pill">customer</span></h3>
+      <table>
+        <tr><td>Bookings</td><td>6 — <span class="pill g">completed</span> <span class="pill a">in&nbsp;progress</span> <span class="pill">just&nbsp;booked</span></td></tr>
+        <tr><td>Reviews written</td><td>3 (with pro responses)</td></tr>
+        <tr><td>Chat</td><td>Multi-message threads with Lola</td></tr>
+      </table>
+    </div>
+  </div>
+  <div class="note"><strong>Media note:</strong> showcase photos/videos are real, hotlink-stable public URLs, so they render
+  live in the customer app's feed and portfolio. Deliverable file downloads serve from local MinIO and are signed against the
+  in-network host, so those specific downloads resolve inside Docker only — a local-dev limitation, not a product one.</div>
+</section>
+
+<div class="foot">Hatrick feature walkthrough · generated for demo preparation</div>
+</main>
+</body>
+</html>
