@@ -1,0 +1,12 @@
+{
+  "rewrites": [
+    {
+      "source": "/hatrick",
+      "destination": "/hatrick.html"
+    },
+    {
+      "source": "/hatrick/",
+      "destination": "/hatrick.html"
+    }
+  ]
+}
